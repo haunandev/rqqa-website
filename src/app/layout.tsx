@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { Providers } from "@/components/Providers";
 import "../styles/globals.css";
 
 export const metadata: Metadata = {
@@ -43,7 +42,7 @@ export default function RootLayout({
   return (
     <html lang="id">
       <head>
-        <meta name="theme-color" content="#0369a1" />
+        <meta name="theme-color" content="#08484A" />
         <link rel="canonical" href="https://qurrota-ayun.org" />
         <script
           type="application/ld+json"
@@ -77,11 +76,9 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-screen bg-white flex flex-col">
-        <Providers>
-          <Header />
-          <main className="flex-1">{children}</main>
-          <Footer />
-        </Providers>
+        <Header />
+        <main className="flex-1">{children}</main>
+        <Footer />
       </body>
     </html>
   );

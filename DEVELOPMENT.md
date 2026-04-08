@@ -163,13 +163,21 @@ export const metadata = {
 
 ### Custom Colors
 
-Defined in `tailwind.config.ts`:
+Defined in `src/theme/colors.ts` and applied from `tailwind.config.ts`.
 
 ```typescript
 primary: {
-  50: "#f0f9ff",
-  600: "#0284c7",
-  700: "#0369a1",
+  50: "#effafa",
+  100: "#d4f3f4",
+  200: "#a8e5e7",
+  300: "#66d0d1",
+  400: "#2ea0a4",
+  500: "#1b7b7d",
+  600: "#08484A",
+  700: "#06363a",
+  800: "#052b30",
+  900: "#041f24",
+  950: "#031419",
 }
 ```
 
