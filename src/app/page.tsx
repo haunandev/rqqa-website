@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Container } from "@/components/Container";
+import PhotoGallery from "@/components/PhotoGallery";
 import { flagshipPrograms } from "@/content/data";
 
 export default function Home() {
@@ -115,6 +116,9 @@ export default function Home() {
           </div>
         </Container>
       </section>
+
+      {/* Photo Gallery Section */}
+      <PhotoGallery />
 
       {/* Vision & Mission Section */}
       <section className="py-20 bg-gradient-to-br from-white/50 to-primary-50/50 backdrop-blur-sm">
