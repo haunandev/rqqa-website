@@ -4,6 +4,7 @@ import { Footer } from "@/components/Footer";
 import "../styles/globals.css";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://qurrota-ayun.org"),
   title: "Yayasan Markaz Qurrota A'yun",
   description:
     "Lembaga dakwah Islam yang berfokus pada pendidikan Qur'an dan pembentukan karakter",
