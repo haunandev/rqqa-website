@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { Container } from "@/components/Container";
 import PhotoGallery from "@/components/PhotoGallery";
+import { ArticlesSection } from "@/components/ArticlesSection";
 import { flagshipPrograms } from "@/content/data";
 
-export default function Home() {
+export default async function Home() {
   return (
     <>
       {/* Hero Section */}
@@ -119,6 +120,15 @@ export default function Home() {
 
       {/* Photo Gallery Section */}
       <PhotoGallery />
+
+      {/* Articles Section */}
+      <ArticlesSection
+        title="Artikel Terbaru"
+        description="Baca artikel dan berita terkini dari Yayasan Markaz Qurrota A'yun tentang pendidikan Islam, tips, dan inspirasi"
+        limit={6}
+        showViewAll={true}
+        featured={true}
+      />
 
       {/* Vision & Mission Section */}
       <section className="py-20 bg-gradient-to-br from-white/50 to-primary-50/50 backdrop-blur-sm">

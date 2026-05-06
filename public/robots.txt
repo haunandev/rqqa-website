@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /*.json$
+Disallow: /api/
+
+# Crawl delay
+Crawl-delay: 1
+
+# Sitemaps
+Sitemap: https://qurrota-ayun.org/sitemap.xml
