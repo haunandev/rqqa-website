@@ -8,6 +8,8 @@ import Link from "next/link";
 import { articleService } from "@/lib/api/services/articleService";
 import { ArticleCard } from "./ArticleCard";
 import { Container } from "./Container";
+import type { StrapiItem } from "@/types/strapi";
+import type { Article } from "@/lib/api/services/articleService";
 
 interface ArticleSectionProps {
   title?: string;
@@ -28,21 +30,19 @@ export async function ArticlesSection({
     const { data: articles } = await articleService.getLatest(limit);
 
     // Jika tidak ada artikel, jangan render section
-    if (!articles || (Array.isArray(articles) && articles.length === 0)) {
+    if (!articles) {
       return null;
     }
 
-    // Ensure articles is array - handle both single item and array responses
-    const articleList = !articles
-      ? []
-      : Array.isArray(articles)
-        ? articles
-        : [articles];
+    // Ensure articles is array - always convert to array
+    const articleList: StrapiItem<Article>[] = (
+      Array.isArray(articles) ? articles : [articles]
+    ) as StrapiItem<Article>[];
 
-    // Jika featured dan ada minimal 3 artikel, tampilkan 1 featured + 5 regular
-    const featuredArticle =
+    // Jika featured dan ada minimal 1 artikel, tampilkan 1 featured + sisanya regular
+    const featuredArticle: StrapiItem<Article> | null =
       featured && articleList.length > 0 ? articleList[0] : null;
-    const regularArticles =
+    const regularArticles: StrapiItem<Article>[] =
       featured && articleList.length > 1 ? articleList.slice(1) : articleList;
 
     return (
