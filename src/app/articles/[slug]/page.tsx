@@ -1,5 +1,6 @@
 import type { Metadata, ResolvingMetadata } from "next";
 import { articleService } from "@/lib/api/services/articleService";
+import { getImageUrl } from "@/lib/utils/image-url";
 import {
   generatePageMetadata,
   generateArticleSchema,
@@ -30,16 +31,16 @@ export async function generateMetadata(
       };
     }
 
-    const coverUrl = article.attributes.cover?.data?.attributes.url;
+    const coverUrl = article.cover?.url;
     const fullImageUrl = coverUrl
       ? `https://qurrota-ayun.org${coverUrl}`
       : undefined;
 
     return generatePageMetadata(
-      article.attributes.title,
-      article.attributes.description,
+      article.title,
+      article.description,
       fullImageUrl,
-      `articles/${article.attributes.slug}`,
+      `articles/${article.slug}`,
     ) as Metadata;
   } catch (error) {
     console.error("Error generating metadata:", error);
@@ -88,21 +89,21 @@ export default async function ArticleDetailPage({ params }: Props) {
     );
   }
 
-  const coverImage = article.attributes.cover?.data?.attributes;
-  const author = article.attributes.author?.data?.attributes;
-  const category = article.attributes.category?.data?.attributes;
+  const coverImage = article.cover;
+  const author = article.author;
+  const category = article.category;
   const fullImageUrl = coverImage
     ? `https://qurrota-ayun.org${coverImage.url}`
     : undefined;
 
   const articleSchema = generateArticleSchema({
-    title: article.attributes.title,
-    description: article.attributes.description,
-    content: article.attributes.content,
+    title: article.title,
+    description: article.description,
+    content: article.content,
     imageUrl: fullImageUrl,
-    slug: `articles/${article.attributes.slug}`,
-    publishedAt: article.attributes.publishedAt,
-    updatedAt: article.attributes.updatedAt,
+    slug: `articles/${article.slug}`,
+    publishedAt: article.publishedAt,
+    updatedAt: article.updatedAt,
     author: author?.name || "Yayasan Markaz Qurrota A'yun",
   });
 
@@ -110,13 +111,13 @@ export default async function ArticleDetailPage({ params }: Props) {
     { name: "Home", url: "https://qurrota-ayun.org" },
     { name: "Artikel", url: "https://qurrota-ayun.org/articles" },
     {
-      name: article.attributes.title,
-      url: `https://qurrota-ayun.org/articles/${article.attributes.slug}`,
+      name: article.title,
+      url: `https://qurrota-ayun.org/articles/${article.slug}`,
     },
   ]);
 
-  const publishedDate = article.attributes.publishedAt
-    ? new Date(article.attributes.publishedAt).toLocaleDateString("id-ID", {
+  const publishedDate = article.publishedAt
+    ? new Date(article.publishedAt).toLocaleDateString("id-ID", {
         weekday: "long",
         year: "numeric",
         month: "long",
@@ -141,7 +142,7 @@ export default async function ArticleDetailPage({ params }: Props) {
             {[
               { name: "Home", url: "/" },
               { name: "Artikel", url: "/articles" },
-              { name: article.attributes.title, url: null },
+              { name: article.title, url: null },
             ].map((item, index) => (
               <span key={item.name}>
                 {index > 0 && <span className="mx-2 text-gray-400">/</span>}
@@ -175,7 +176,7 @@ export default async function ArticleDetailPage({ params }: Props) {
             )}
 
             <h1 className="text-4xl md:text-5xl font-bold mb-6 text-gray-900">
-              {article.attributes.title}
+              {article.title}
             </h1>
 
             <div className="flex flex-col md:flex-row md:items-center gap-4 pb-6 border-b border-gray-200">
@@ -195,15 +196,13 @@ export default async function ArticleDetailPage({ params }: Props) {
 
               {!author && publishedDate && (
                 <div className="text-gray-600">
-                  <time dateTime={article.attributes.publishedAt}>
-                    📅 {publishedDate}
-                  </time>
+                  <time dateTime={article.publishedAt}>📅 {publishedDate}</time>
                 </div>
               )}
             </div>
 
             <p className="text-xl text-gray-600 mt-6 mb-8 leading-relaxed">
-              {article.attributes.description}
+              {article.description}
             </p>
           </article>
         </Container>
@@ -212,8 +211,8 @@ export default async function ArticleDetailPage({ params }: Props) {
       {coverImage && (
         <div className="w-full bg-gray-200">
           <img
-            src={coverImage.url}
-            alt={coverImage.alternativeText || article.attributes.title}
+            src={getImageUrl(coverImage.url) || ""}
+            alt={coverImage.alternativeText || article.title}
             className="w-full h-96 md:h-[500px] object-cover"
             loading="lazy"
             width={1200}
@@ -244,7 +243,7 @@ export default async function ArticleDetailPage({ params }: Props) {
               </p>
               <div className="flex gap-4">
                 <a
-                  href={`https://www.facebook.com/sharer/sharer.php?u=https://qurrota-ayun.org/articles/${article.attributes.slug}`}
+                  href={`https://www.facebook.com/sharer/sharer.php?u=https://qurrota-ayun.org/articles/${article.slug}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm"
@@ -252,7 +251,7 @@ export default async function ArticleDetailPage({ params }: Props) {
                   Facebook
                 </a>
                 <a
-                  href={`https://twitter.com/intent/tweet?url=https://qurrota-ayun.org/articles/${article.attributes.slug}&text=${article.attributes.title}`}
+                  href={`https://twitter.com/intent/tweet?url=https://qurrota-ayun.org/articles/${article.slug}&text=${article.title}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="px-4 py-2 bg-blue-400 text-white rounded-lg hover:bg-blue-500 transition text-sm"
@@ -260,7 +259,7 @@ export default async function ArticleDetailPage({ params }: Props) {
                   Twitter
                 </a>
                 <a
-                  href={`https://www.linkedin.com/sharing/share-offsite/?url=https://qurrota-ayun.org/articles/${article.attributes.slug}`}
+                  href={`https://www.linkedin.com/sharing/share-offsite/?url=https://qurrota-ayun.org/articles/${article.slug}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="px-4 py-2 bg-blue-700 text-white rounded-lg hover:bg-blue-800 transition text-sm"

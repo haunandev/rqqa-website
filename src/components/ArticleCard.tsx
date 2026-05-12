@@ -4,20 +4,26 @@
  */
 
 import Link from "next/link";
-import type { StrapiItem } from "@/types/strapi";
+import { getImageUrl } from "@/lib/utils/image-url";
 import type { Article } from "@/lib/api/services/articleService";
 
 interface ArticleCardProps {
-  article: StrapiItem<Article>;
+  article: Article;
   featured?: boolean;
 }
 
 export function ArticleCard({ article, featured = false }: ArticleCardProps) {
-  const coverImage = article.attributes.cover?.data?.attributes;
-  const author = article.attributes.author?.data?.attributes;
-  const category = article.attributes.category?.data?.attributes;
-  const publishedDate = article.attributes.publishedAt
-    ? new Date(article.attributes.publishedAt).toLocaleDateString("id-ID", {
+  // Safety checks for article data
+  if (!article) {
+    console.warn("ArticleCard: Missing article", { article });
+    return null;
+  }
+
+  const coverImage = article.cover;
+  const author = article.author;
+  const category = article.category;
+  const publishedDate = article.publishedAt
+    ? new Date(article.publishedAt).toLocaleDateString("id-ID", {
         year: "numeric",
         month: "long",
         day: "numeric",
@@ -27,14 +33,14 @@ export function ArticleCard({ article, featured = false }: ArticleCardProps) {
   if (featured) {
     // Featured article - larger card
     return (
-      <Link href={`/articles/${article.attributes.slug}`}>
+      <Link href={`/articles/${article.slug}`}>
         <article className="group rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 h-full">
           {/* Featured Image */}
           {coverImage && (
             <div className="relative w-full h-80 overflow-hidden bg-gray-200">
               <img
-                src={coverImage.url}
-                alt={coverImage.alternativeText || article.attributes.title}
+                src={getImageUrl(coverImage.url) || ""}
+                alt={coverImage.alternativeText || article.title}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 loading="lazy"
                 width={800}
@@ -59,12 +65,12 @@ export function ArticleCard({ article, featured = false }: ArticleCardProps) {
           <div className="p-6 flex flex-col h-full">
             {/* Title */}
             <h3 className="text-2xl font-bold mb-3 text-gray-900 group-hover:text-primary-600 transition line-clamp-2">
-              {article.attributes.title}
+              {article.title}
             </h3>
 
             {/* Description */}
             <p className="text-gray-600 text-base leading-relaxed mb-4 line-clamp-3 flex-grow">
-              {article.attributes.description}
+              {article.description}
             </p>
 
             {/* Meta Info */}
@@ -93,14 +99,14 @@ export function ArticleCard({ article, featured = false }: ArticleCardProps) {
 
   // Regular article card
   return (
-    <Link href={`/articles/${article.attributes.slug}`}>
+    <Link href={`/articles/${article.slug}`}>
       <article className="group rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 h-full flex flex-col">
         {/* Image */}
         {coverImage && (
           <div className="relative w-full h-48 overflow-hidden bg-gray-200">
             <img
-              src={coverImage.url}
-              alt={coverImage.alternativeText || article.attributes.title}
+              src={getImageUrl(coverImage.url) || ""}
+              alt={coverImage.alternativeText || article.title}
               className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
               loading="lazy"
               width={400}
@@ -120,12 +126,12 @@ export function ArticleCard({ article, featured = false }: ArticleCardProps) {
 
           {/* Title */}
           <h3 className="font-bold text-base mb-2 text-gray-900 group-hover:text-primary-600 transition line-clamp-2">
-            {article.attributes.title}
+            {article.title}
           </h3>
 
           {/* Description */}
           <p className="text-gray-600 text-sm line-clamp-2 mb-4 flex-grow">
-            {article.attributes.description}
+            {article.description}
           </p>
 
           {/* Meta */}

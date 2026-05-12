@@ -82,7 +82,7 @@ import { strapi } from "@/lib/api/strapi";
 
 // Get list
 const articles = await strapi.list("articles", {
-  populate: "author",
+  populate: ["author"],
   filters: { published: true },
   sort: "createdAt:desc",
   pagination: { page: 1, pageSize: 10 },
@@ -90,7 +90,7 @@ const articles = await strapi.list("articles", {
 
 // Get single
 const article = await strapi.get("articles", 1, {
-  populate: "author,comments",
+  populate: ["author", "comments"],
 });
 
 // Create
@@ -180,7 +180,7 @@ export const articleService = {
   // Get all articles
   getAll: async (params = {}) => {
     return strapi.list<Article>("articles", {
-      populate: "author,category",
+      populate: ["author", "category"],
       sort: "createdAt:desc",
       ...params,
     });
@@ -194,7 +194,7 @@ export const articleService = {
           $notNull: true,
         },
       },
-      populate: "author,category",
+      populate: ["author", "category"],
       sort: "createdAt:desc",
       pagination,
     });
@@ -203,7 +203,7 @@ export const articleService = {
   // Get single article
   getById: async (id: number) => {
     return strapi.get<Article>("articles", id, {
-      populate: "author,category,comments",
+      populate: ["author", "category", "comments"],
     });
   },
 
@@ -309,7 +309,7 @@ Gunakan `populate` untuk include relations yang diperlukan:
 ```typescript
 // ✅ Good - hanya load author dan category
 strapi.get("articles", 1, {
-  populate: "author,category",
+  populate: ["author", "category"],
 });
 
 // ❌ Bad - tidak specify populate (tidak include relations)

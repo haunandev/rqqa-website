@@ -8,7 +8,7 @@ import Link from "next/link";
 import { articleService } from "@/lib/api/services/articleService";
 import { ArticleCard } from "./ArticleCard";
 import { Container } from "./Container";
-import type { StrapiItem } from "@/types/strapi";
+import { SubscribeForm } from "./SubscribeForm";
 import type { Article } from "@/lib/api/services/articleService";
 
 interface ArticleSectionProps {
@@ -28,6 +28,7 @@ export async function ArticlesSection({
 }: ArticleSectionProps) {
   try {
     const { data: articles } = await articleService.getLatest(limit);
+    console.log("ArticlesSection: Fetched articles:", articles);
 
     // Jika tidak ada artikel, jangan render section
     if (!articles) {
@@ -35,15 +36,18 @@ export async function ArticlesSection({
     }
 
     // Ensure articles is array - always convert to array
-    const articleList: StrapiItem<Article>[] = (
-      Array.isArray(articles) ? articles : [articles]
-    ) as StrapiItem<Article>[];
+    const articleList: Article[] = (Array.isArray(articles)
+      ? articles
+      : [articles]) as unknown as Article[];
 
     // Jika featured dan ada minimal 1 artikel, tampilkan 1 featured + sisanya regular
-    const featuredArticle: StrapiItem<Article> | null =
+    const featuredArticle: Article | null =
       featured && articleList.length > 0 ? articleList[0] : null;
-    const regularArticles: StrapiItem<Article>[] =
+    const regularArticles: Article[] =
       featured && articleList.length > 1 ? articleList.slice(1) : articleList;
+
+    console.log("ArticlesSection: Featured article:", featuredArticle);
+    console.log("ArticlesSection: Regular articles:", regularArticles);
 
     return (
       <section className="py-20 bg-gradient-to-b from-white to-primary-50/30">
@@ -89,22 +93,7 @@ export async function ArticlesSection({
                     <h4 className="font-semibold text-sm mb-3">
                       Ikuti Update Terbaru
                     </h4>
-                    <form
-                      className="flex gap-2"
-                      onSubmit={(e) => e.preventDefault()}
-                    >
-                      <input
-                        type="email"
-                        placeholder="Email Anda"
-                        className="flex-1 px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-primary-600 text-sm"
-                      />
-                      <button
-                        type="submit"
-                        className="px-3 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition text-sm font-semibold"
-                      >
-                        Subscribe
-                      </button>
-                    </form>
+                    <SubscribeForm />
                   </div>
                 </div>
               </div>
@@ -115,13 +104,8 @@ export async function ArticlesSection({
           {regularArticles.length > 0 && (
             <div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {regularArticles.map((article, index) => (
-                  <div
-                    key={article.id}
-                    style={{
-                      animation: `fadeInUp 0.6s ease-out ${0.1 * index}s both`,
-                    }}
-                  >
+                {regularArticles.map((article) => (
+                  <div key={article.id}>
                     <ArticleCard article={article} />
                   </div>
                 ))}
@@ -144,7 +128,12 @@ export async function ArticlesSection({
       </section>
     );
   } catch (error) {
-    console.error("Failed to fetch articles:", error);
+    const errorMessage =
+      error instanceof Error ? error.message : JSON.stringify(error);
+    console.error("ArticlesSection: Failed to fetch articles:", {
+      message: errorMessage,
+      error,
+    });
     return null;
   }
 }

@@ -20,14 +20,14 @@ import { strapi } from "@/lib/api/strapi";
 export const articleService = {
   getAll: async (params = {}) => {
     return strapi.list("articles", {
-      populate: "author,category",
+      populate: ["author", "category"],
       ...params,
     });
   },
 
   getById: async (id: number) => {
     return strapi.get("articles", id, {
-      populate: "author,category,comments",
+      populate: ["author", "category", "comments"],
     });
   },
 

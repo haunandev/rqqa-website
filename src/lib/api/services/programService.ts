@@ -45,7 +45,7 @@ export const programService = {
    */
   getAll: async (params = {}) => {
     return strapi.list<Program>("programs", {
-      populate: "media",
+      populate: ["media"],
       sort: "createdAt:desc",
       ...params,
     });
@@ -62,7 +62,7 @@ export const programService = {
           $notNull: true,
         },
       },
-      populate: "media",
+      populate: ["media"],
       sort: "createdAt:desc",
       pagination,
       publicationState: "live",
@@ -74,7 +74,7 @@ export const programService = {
    */
   getById: async (id: number) => {
     return strapi.get<Program>("programs", id, {
-      populate: "media",
+      populate: ["media"],
     });
   },
 
@@ -89,7 +89,7 @@ export const programService = {
           $eq: slug,
         },
       },
-      populate: "media",
+      populate: ["media"],
       publicationState: "live",
     });
 
@@ -129,7 +129,7 @@ export const programService = {
           { description: { $contains: query } },
         ],
       },
-      populate: "media",
+      populate: ["media"],
       pagination,
       publicationState: "live",
     });

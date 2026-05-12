@@ -11,41 +11,37 @@ import type { StrapiItem } from "@/types/strapi";
  * Fields: title, description, slug, cover, author, category, blocks
  */
 export interface Article {
+  id: number;
+  documentId: string;
   title: string;
   slug: string;
   description: string;
   content?: string;
   cover?: {
-    data: {
-      id: number;
-      attributes: {
-        url: string;
-        alternativeText?: string;
-        name: string;
-        mime: string;
-        size: number;
-        width?: number;
-        height?: number;
-      };
+    id: number;
+    name: string;
+    alternativeText?: string;
+    url: string;
+    mime: string;
+    size: number;
+    width?: number;
+    height?: number;
+    formats?: {
+      large?: { url: string };
+      medium?: { url: string };
+      small?: { url: string };
+      thumbnail?: { url: string };
     };
   };
   author?: {
-    data: {
-      id: number;
-      attributes: {
-        name: string;
-        email: string;
-      };
-    };
+    id: number;
+    name: string;
+    email: string;
   };
   category?: {
-    data: {
-      id: number;
-      attributes: {
-        name: string;
-        slug: string;
-      };
-    };
+    id: number;
+    name: string;
+    slug: string;
   };
   blocks?: any[]; // Dynamic zone
   publishedAt?: string;
@@ -63,7 +59,9 @@ export const articleService = {
    */
   getAll: async (params = {}) => {
     return strapi.list<Article>("articles", {
-      populate: "cover,author,category",
+      "populate[0]": "cover",
+      "populate[1]": "author",
+      "populate[2]": "category",
       sort: "publishedAt:desc",
       ...params,
     });
@@ -80,7 +78,9 @@ export const articleService = {
           $notNull: true,
         },
       },
-      populate: "cover,author,category",
+      "populate[0]": "cover",
+      "populate[1]": "author",
+      "populate[2]": "category",
       sort: "publishedAt:desc",
       pagination,
       publicationState: "live",
@@ -98,7 +98,9 @@ export const articleService = {
           $notNull: true,
         },
       },
-      populate: "cover,author,category",
+      "populate[0]": "cover",
+      "populate[1]": "author",
+      "populate[2]": "category",
       sort: "publishedAt:desc",
       pagination: { limit },
       publicationState: "live",
@@ -110,7 +112,10 @@ export const articleService = {
    */
   getById: async (id: number) => {
     return strapi.get<Article>("articles", id, {
-      populate: "cover,author,category,blocks",
+      "populate[0]": "cover",
+      "populate[1]": "author",
+      "populate[2]": "category",
+      "populate[3]": "blocks",
     });
   },
 
@@ -125,7 +130,10 @@ export const articleService = {
           $eq: slug,
         },
       },
-      populate: "cover,author,category,blocks",
+      "populate[0]": "cover",
+      "populate[1]": "author",
+      "populate[2]": "category",
+      "populate[3]": "blocks",
       publicationState: "live",
     });
 
@@ -150,7 +158,9 @@ export const articleService = {
           $notNull: true,
         },
       },
-      populate: "cover,author,category",
+      "populate[0]": "cover",
+      "populate[1]": "author",
+      "populate[2]": "category",
       sort: "publishedAt:desc",
       pagination,
       publicationState: "live",
@@ -172,7 +182,9 @@ export const articleService = {
           $notNull: true,
         },
       },
-      populate: "cover,author,category",
+      "populate[0]": "cover",
+      "populate[1]": "author",
+      "populate[2]": "category",
       sort: "publishedAt:desc",
       pagination,
       publicationState: "live",
@@ -211,7 +223,9 @@ export const articleService = {
           { description: { $contains: query } },
         ],
       },
-      populate: "cover,author,category",
+      "populate[0]": "cover",
+      "populate[1]": "author",
+      "populate[2]": "category",
       pagination,
       publicationState: "live",
     });
@@ -240,7 +254,9 @@ export const articleService = {
           $notNull: true,
         },
       },
-      populate: "cover,author,category",
+      "populate[0]": "cover",
+      "populate[1]": "author",
+      "populate[2]": "category",
       sort: "publishedAt:desc",
       pagination: { limit },
       publicationState: "live",

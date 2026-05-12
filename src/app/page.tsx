@@ -3,8 +3,12 @@ import { Container } from "@/components/Container";
 import PhotoGallery from "@/components/PhotoGallery";
 import { ArticlesSection } from "@/components/ArticlesSection";
 import { flagshipPrograms } from "@/content/data";
+import { testStrapiConnection } from "@/lib/api/debug";
 
 export default async function Home() {
+  // Add this for debugging
+  const connectionTest = await testStrapiConnection();
+  console.log("📊 Strapi Connection Test:", connectionTest);
   return (
     <>
       {/* Hero Section */}

@@ -36,6 +36,7 @@ export const strapi = {
     params?: StrapiQueryParams,
   ): Promise<StrapiResponse<StrapiItem<T>[]>> => {
     const endpoint = buildEndpoint(resourceType);
+    console.log("Fetching list from Strapi:", endpoint, params);
     return api.get(endpoint, { params: params as any });
   },
 
