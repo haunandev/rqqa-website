@@ -1,5 +1,5 @@
 import type { Metadata, ResolvingMetadata } from "next";
-import { articleService } from "@/lib/api/services/articleService";
+import { Article, articleService } from "@/lib/api/services/articleService";
 import { getImageUrl } from "@/lib/utils/image-url";
 import {
   generatePageMetadata,
@@ -11,9 +11,9 @@ import { Container } from "@/components/Container";
 import Link from "next/link";
 
 interface Props {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }
 
 export async function generateMetadata(
@@ -21,7 +21,9 @@ export async function generateMetadata(
   parent: ResolvingMetadata,
 ): Promise<Metadata> {
   try {
-    const article = await articleService.getBySlug(params.slug);
+    const article = (await articleService.getBySlug(
+      (await params).slug,
+    )) as unknown as Article;
 
     if (!article) {
       return {
@@ -32,9 +34,7 @@ export async function generateMetadata(
     }
 
     const coverUrl = article.cover?.url;
-    const fullImageUrl = coverUrl
-      ? `https://qurrota-ayun.org${coverUrl}`
-      : undefined;
+    const fullImageUrl = getImageUrl(coverUrl) || undefined;
 
     return generatePageMetadata(
       article.title,
@@ -55,7 +55,17 @@ export default async function ArticleDetailPage({ params }: Props) {
   let article;
 
   try {
-    article = await articleService.getBySlug(params.slug);
+    console.log(
+      "ArticleDetailPage: Fetching article with slug:",
+      await (
+        await params
+      ).slug,
+    );
+    article = (await articleService.getBySlug(
+      (await params).slug,
+    )) as unknown as Article;
+
+    console.log("ArticleDetailPage: Fetched article:", article);
 
     if (!article) {
       return (
@@ -92,9 +102,7 @@ export default async function ArticleDetailPage({ params }: Props) {
   const coverImage = article.cover;
   const author = article.author;
   const category = article.category;
-  const fullImageUrl = coverImage
-    ? `https://qurrota-ayun.org${coverImage.url}`
-    : undefined;
+  const fullImageUrl = getImageUrl(coverImage?.url) || undefined;
 
   const articleSchema = generateArticleSchema({
     title: article.title,
@@ -224,16 +232,16 @@ export default async function ArticleDetailPage({ params }: Props) {
       <div className="py-16 md:py-20">
         <Container>
           <div className="max-w-3xl mx-auto">
-            {article.attributes.content ? (
+            {article.content ? (
               <div
                 className="prose prose-lg max-w-none text-gray-800 leading-relaxed"
                 dangerouslySetInnerHTML={{
-                  __html: article.attributes.content,
+                  __html: article.content,
                 }}
               />
             ) : (
               <p className="text-gray-700 text-lg leading-relaxed">
-                {article.attributes.description}
+                {article.description}
               </p>
             )}
 

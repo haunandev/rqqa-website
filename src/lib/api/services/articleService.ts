@@ -73,11 +73,7 @@ export const articleService = {
    */
   getPublished: async (pagination = { pageSize: 10 }) => {
     return strapi.list<Article>("articles", {
-      filters: {
-        publishedAt: {
-          $notNull: true,
-        },
-      },
+      "filters[publishedAt][$notNull]": true,
       "populate[0]": "cover",
       "populate[1]": "author",
       "populate[2]": "category",
@@ -93,11 +89,7 @@ export const articleService = {
    */
   getLatest: async (limit: number = 6) => {
     return strapi.list<Article>("articles", {
-      filters: {
-        publishedAt: {
-          $notNull: true,
-        },
-      },
+      "filters[publishedAt][$notNull]": true,
       "populate[0]": "cover",
       "populate[1]": "author",
       "populate[2]": "category",
@@ -124,18 +116,16 @@ export const articleService = {
    * Untuk dynamic routes
    */
   getBySlug: async (slug: string) => {
+    console.log("articleService.getBySlug: Fetching article with slug:", slug);
     const response = await strapi.list<Article>("articles", {
-      filters: {
-        slug: {
-          $eq: slug,
-        },
-      },
+      "filters[slug][$eq]": slug,
       "populate[0]": "cover",
       "populate[1]": "author",
       "populate[2]": "category",
       "populate[3]": "blocks",
       publicationState: "live",
     });
+    console.log("articleService.getBySlug: API response:", response);
 
     return response.data?.[0];
   },
@@ -148,16 +138,8 @@ export const articleService = {
     pagination = { pageSize: 10 },
   ) => {
     return strapi.list<Article>("articles", {
-      filters: {
-        category: {
-          slug: {
-            $eq: categorySlug,
-          },
-        },
-        publishedAt: {
-          $notNull: true,
-        },
-      },
+      "filters[category][slug][$eq]": categorySlug,
+      "filters[publishedAt][$notNull]": true,
       "populate[0]": "cover",
       "populate[1]": "author",
       "populate[2]": "category",
@@ -172,16 +154,8 @@ export const articleService = {
    */
   getByAuthor: async (authorId: number, pagination = { pageSize: 10 }) => {
     return strapi.list<Article>("articles", {
-      filters: {
-        author: {
-          id: {
-            $eq: authorId,
-          },
-        },
-        publishedAt: {
-          $notNull: true,
-        },
-      },
+      "filters[author][id][$eq]": authorId,
+      "filters[publishedAt][$notNull]": true,
       "populate[0]": "cover",
       "populate[1]": "author",
       "populate[2]": "category",
@@ -217,12 +191,8 @@ export const articleService = {
    */
   search: async (query: string, pagination = { pageSize: 20 }) => {
     return strapi.list<Article>("articles", {
-      filters: {
-        $or: [
-          { title: { $contains: query } },
-          { description: { $contains: query } },
-        ],
-      },
+      "filters[$or][0][title][$contains]": query,
+      "filters[$or][1][description][$contains]": query,
       "populate[0]": "cover",
       "populate[1]": "author",
       "populate[2]": "category",
@@ -241,19 +211,9 @@ export const articleService = {
     limit: number = 3,
   ) => {
     return strapi.list<Article>("articles", {
-      filters: {
-        category: {
-          id: {
-            $eq: categoryId,
-          },
-        },
-        id: {
-          $ne: excludeId,
-        },
-        publishedAt: {
-          $notNull: true,
-        },
-      },
+      "filters[category][id][$eq]": categoryId,
+      "filters[id][$ne]": excludeId,
+      "filters[publishedAt][$notNull]": true,
       "populate[0]": "cover",
       "populate[1]": "author",
       "populate[2]": "category",
